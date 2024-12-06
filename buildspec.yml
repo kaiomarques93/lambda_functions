@@ -1,0 +1,31 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Installing dependencies.."
+      # - pip install -r requirements.txt -t lib
+
+  pre_build:
+    commands:
+      - echo Pre-build phase started
+      - cd lib
+      - zip -r9 ../lambda_function.zip .
+      - cd ..
+      - zip -g lambda_function.zip lambda_function.py
+
+  build:
+    commands:
+      - echo Build phase started
+
+  post_build:
+    commands:
+      - echo Post-build phase started
+      - aws lambda update-function-code --function-name saveFile --zip-file fileb://lambda_function.zip
+      - echo "DONE!!"
+
+artifacts:
+  files:
+    - lambda_function.zip
